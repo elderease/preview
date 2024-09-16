@@ -1,26 +1,11 @@
 const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
-
 const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 3000;
-
-const cors = require("cors");
-require("dotenv").config();
-// CORS configuration
-app.use(
-  cors({
-    origin:
-      process.env.FRONTEND_URL ||
-      "https://incomparable-taiyaki-956d9f.netlify.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const port = process.env.PORT || 10000;
 
 app.use(express.json());
 
@@ -40,6 +25,7 @@ sequelize
   .authenticate()
   .then(() => console.log("Database connected successfully"))
   .catch((err) => console.error("Unable to connect to the database:", err));
+
 // Define models
 const User = sequelize.define("User", {
   id: {
@@ -108,38 +94,37 @@ const Notification = sequelize.define("Notification", {
 });
 
 // Sync models with database
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log("Database synchronized");
 });
 
 // Helper function to create notifications
 const createNotification = async (userId, title, message, taskId) => {
-  console.log(`Creating notification for user ${userId}`);
-  const newNotification = await Notification.create({
-    userId,
-    title,
-    message,
-    taskId,
-    read: false,
-    createdAt: new Date(),
-  });
-  console.log(`Notification added to database for user ${userId}`);
-  return newNotification;
+  try {
+    const newNotification = await Notification.create({
+      userId,
+      title,
+      message,
+      taskId,
+      read: false,
+      createdAt: new Date(),
+    });
+    console.log(`Notification added for user ${userId}`);
+    return newNotification;
+  } catch (error) {
+    console.error("Error creating notification:", error);
+  }
 };
 
-// Root route for API health check
+// Routes
 app.get("/", (req, res) => {
   res.send("ElderEase API is running");
 });
 
-// Routes
 app.post("/tasks", async (req, res) => {
   try {
     const newTask = await Task.create(req.body);
-    console.log("New task created:", newTask);
-
     const volunteers = await User.findAll({ where: { userType: "volunteer" } });
-    console.log(`Found ${volunteers.length} volunteers to notify`);
 
     for (const volunteer of volunteers) {
       await createNotification(
@@ -337,15 +322,6 @@ app.patch("/notifications/:id", async (req, res) => {
   }
 });
 
-// Serve uploaded files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
-//
 app.get("/users", async (req, res) => {
   try {
     const users = await User.findAll();
@@ -356,13 +332,13 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.get("/fetch-tasks", async (req, res) => {
+app.get("/tasks", async (req, res) => {
   try {
     const tasks = await Task.findAll();
     res.json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error fetching tasks" });
   }
 });
 
@@ -380,18 +356,7 @@ app.get("/notifications", async (req, res) => {
   }
 });
 
-app.get("/tasks", async (req, res) => {
-  try {
-    const tasks = await Task.findAll();
-    res.json(tasks);
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-    res.status(500).json({ error: "Error fetching tasks" });
-  }
-});
-
 app.post("/login", async (req, res) => {
-  console.log("Login route hit", req.body);
   const { username, password } = req.body;
   try {
     const user = await User.findOne({ where: { username } });
@@ -406,9 +371,22 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// 404 handler
 app.use((req, res) => {
   res.status(404).send("Not Found");
 });
-app.listen(port, () => {
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
+
+// Start the server
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running on port ${port}`);
 });
