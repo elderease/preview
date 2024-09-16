@@ -10,7 +10,8 @@ const port = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: "https://your-frontend-url.netlify.app", // Replace with your actual frontend URL
+    origin: "https://incomparable-taiyaki-956d9f.netlify.app/",
+    credentials: true,
   })
 );
 app.use(express.json({ limit: "10mb" }));
@@ -26,7 +27,10 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     },
   },
 });
-
+sequelize
+  .authenticate()
+  .then(() => console.log("Database connected successfully"))
+  .catch((err) => console.error("Unable to connect to the database:", err));
 // Define models
 const User = sequelize.define("User", {
   id: {

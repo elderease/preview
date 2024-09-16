@@ -48,7 +48,7 @@ function AppContent() {
   const notificationRef = useRef(null);
   const navigate = useNavigate();
 
-  const API_BASE_URL = "https://preview-bc6q.onrender.com/";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   // Function to fetch notifications from the server
   // Input: None

@@ -13,7 +13,7 @@ const ElderlyDashboard = () => {
   const [tasks, setTasks] = useState([]);
   const location = useLocation();
 
-  const API_BASE_URL = "https://preview-bc6q.onrender.com/";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   // Memoize fetchTasks to avoid recreating it on every render
   const fetchTasks = useCallback(async () => {

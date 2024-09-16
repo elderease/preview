@@ -20,7 +20,7 @@ const Notifications = ({
     try {
       // Mark the notification as read
       await fetch(
-        `https://preview-bc6q.onrender.com//notifications/${notification.id}`,
+        `${process.env.REACT_APP_API_URL}/notifications/${notification.id}`,
         {
           method: "PATCH",
           headers: {

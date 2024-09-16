@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   const checkUsernameUnique = async (username) => {
     try {
       const response = await fetch(
-        `https://preview-bc6q.onrender.com//users?username=${username}`
+        `${process.env.REACT_APP_API_URL}/users?username=${username}`
       );
       const users = await response.json();
       return users.length === 0;
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   const checkPhoneUnique = async (phone) => {
     try {
       const response = await fetch(
-        `https://preview-bc6q.onrender.com//users?phoneNumber=${phone}`
+        `${process.env.REACT_APP_API_URL}/users?phoneNumber=${phone}`
       );
       const users = await response.json();
       return users.length === 0;
@@ -56,7 +56,10 @@ export const AuthProvider = ({ children }) => {
   // Output: boolean (true if login successful, false otherwise)
   const login = async (credentials) => {
     try {
-      const response = await fetch("https://preview-bc6q.onrender.com//users");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
       const users = await response.json();
       const user = users.find(
         (u) =>
@@ -93,7 +96,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Phone number already in use");
       }
 
-      const response = await fetch("https://preview-bc6q.onrender.com//users", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
