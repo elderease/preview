@@ -9,13 +9,19 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const cors = require("cors");
+app.options("*", cors());
+
 app.use(
   cors({
     origin: "https://incomparable-taiyaki-956d9f.netlify.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+app.options("*", cors());
 
+app.use(express.json());
 // Database connection
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
@@ -382,6 +388,7 @@ app.get("/tasks", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
+  console.log("Login route hit", req.body);
   const { username, password } = req.body;
   try {
     const user = await User.findOne({ where: { username } });
@@ -396,7 +403,6 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 app.use((req, res) => {
   res.status(404).send("Not Found");
 });
