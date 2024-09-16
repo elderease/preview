@@ -97,7 +97,7 @@ const Notification = sequelize.define("Notification", {
 sequelize.sync({ force: false }).then(() => {
   console.log("Database synchronized");
 });
-
+//
 // Helper function to create notifications
 const createNotification = async (userId, title, message, taskId) => {
   try {
