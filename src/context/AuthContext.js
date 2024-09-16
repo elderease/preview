@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkUsernameUnique = async (username) => {
     try {
-      const response = await fetch(`/users?username=${username}`);
+      const response = await fetch(`${API_URL}users?username=${username}`);
       const users = await response.json();
       return users.length === 0;
     } catch (error) {
@@ -27,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkPhoneUnique = async (phone) => {
     try {
-      const response = await fetch(`/users?phoneNumber=${phone}`);
+      const response = await fetch(`${API_URL}/users?phoneNumber=${phone}`);
       const users = await response.json();
       return users.length === 0;
     } catch (error) {
@@ -38,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await fetch("/login", {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Phone number already in use");
       }
 
-      const response = await fetch("/users", {
+      const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
