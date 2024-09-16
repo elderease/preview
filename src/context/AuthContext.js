@@ -56,11 +56,16 @@ export const AuthProvider = ({ children }) => {
   // Output: boolean (true if login successful, false otherwise)
   const login = async (credentials) => {
     try {
+      console.log(
+        "Attempting to fetch users from:",
+        `${process.env.REACT_APP_API_URL}/users`
+      );
       const response = await fetch(`${process.env.REACT_APP_API_URL}/users`);
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       const users = await response.json();
+      console.log("Fetched users:", users);
       const user = users.find(
         (u) =>
           u.username === credentials.username &&

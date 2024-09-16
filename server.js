@@ -10,11 +10,12 @@ const port = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: "https://incomparable-taiyaki-956d9f.netlify.app/",
+    origin:
+      process.env.CORS_ORIGIN ||
+      "https://incomparable-taiyaki-956d9f.netlify.app",
     credentials: true,
   })
 );
-app.use(express.json({ limit: "10mb" }));
 
 // Database connection
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
