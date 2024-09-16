@@ -95,7 +95,7 @@ const Notification = sequelize.define("Notification", {
 });
 
 // Sync models with database
-sequelize.sync({ alter: true }).then(() => {
+sequelize.sync({ force: true }).then(() => {
   console.log("Database synchronized");
 });
 
