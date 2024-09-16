@@ -60,7 +60,13 @@ export const AuthProvider = ({ children }) => {
         "Attempting to fetch users from:",
         `${process.env.REACT_APP_API_URL}/users`
       );
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -157,3 +163,4 @@ export const useAuth = () => {
   }
   return context;
 };
+console.log("API URL:", process.env.REACT_APP_API_URL);

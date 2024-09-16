@@ -1,6 +1,6 @@
 const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
-const cors = require("cors");
+
 const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
@@ -8,11 +8,10 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+const cors = require("cors");
 app.use(
   cors({
-    origin:
-      process.env.CORS_ORIGIN ||
-      "https://incomparable-taiyaki-956d9f.netlify.app",
+    origin: "https://incomparable-taiyaki-956d9f.netlify.app",
     credentials: true,
   })
 );
