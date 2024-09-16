@@ -57,34 +57,24 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       console.log(
-        "Attempting to fetch users from:",
-        `${process.env.REACT_APP_API_URL}/users`
+        "Attempting to login:",
+        `${process.env.REACT_APP_API_URL}/login`
       );
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
-        method: "GET",
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        body: JSON.stringify(credentials),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const users = await response.json();
-      console.log("Fetched users:", users);
-      const user = users.find(
-        (u) =>
-          u.username === credentials.username &&
-          u.password === credentials.password
-      );
-
-      if (user) {
-        const { password, ...userWithoutPassword } = user;
-        setUser(userWithoutPassword);
-        localStorage.setItem("user", JSON.stringify(userWithoutPassword));
-        return true;
-      }
-      return false;
+      const user = await response.json();
+      console.log("Login response:", user);
+      setUser(user);
+      localStorage.setItem("user", JSON.stringify(user));
+      return true;
     } catch (error) {
       console.error("Login error:", error);
       return false;

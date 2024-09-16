@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 const cors = require("cors");
 app.use(
   cors({
-    origin: "*", // Allow all origins for now, you can restrict this later
+    origin: "https://incomparable-taiyaki-956d9f.netlify.app",
     credentials: true,
   })
 );
@@ -378,6 +378,22 @@ app.get("/tasks", async (req, res) => {
   } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).json({ error: "Error fetching tasks" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (user && user.password === password) {
+      const { password, ...userWithoutPassword } = user.toJSON();
+      res.json(userWithoutPassword);
+    } else {
+      res.status(401).json({ error: "Invalid username or password" });
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
