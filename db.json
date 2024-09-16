@@ -2,21 +2,16 @@
   "users": [
     {
       "id": "1724159755110",
-      "username": "gavriel",
+      "username": "israel",
       "password": "01122006",
       "userType": "volunteer",
-      "firstName": "Gavriel",
-      "lastName": "Arzomanov",
+      "firstName": "israel",
+      "lastName": "israeli",
       "phoneNumber": "0509999999",
       "address": "123 Main St, Cityville",
-      "languages": [
-        "English",
-        "Russian"
-      ],
+      "languages": ["English", "Russian"],
       "birthDate": "1990-05-15",
-      "transportation": [
-        "Car"
-      ],
+      "transportation": ["Car"],
       "rating": 4.764705882352941,
       "ratingCount": 17
     },
@@ -29,10 +24,7 @@
       "lastName": "Smith",
       "phoneNumber": "+1 (443) 197-5039",
       "address": "456 Elm St, Townsburg",
-      "languages": [
-        "English",
-        "French"
-      ],
+      "languages": ["English", "French"],
       "rating": null,
       "ratingCount": null
     },
@@ -45,10 +37,7 @@
       "lastName": "Hassan",
       "phoneNumber": "+1 (132) 995-5543",
       "address": "789 Oak Ave, Villagetown",
-      "languages": [
-        "Arabic",
-        "English"
-      ],
+      "languages": ["Arabic", "English"],
       "rating": null,
       "ratingCount": null
     },
@@ -61,16 +50,9 @@
       "lastName": "Johnson",
       "phoneNumber": "+1 (178) 284-6718",
       "address": "101 Pine Rd, Helpville",
-      "languages": [
-        "English",
-        "Spanish",
-        "French"
-      ],
+      "languages": ["English", "Spanish", "French"],
       "birthDate": "1988-08-28",
-      "transportation": [
-        "Bike",
-        "Public Transportation"
-      ],
+      "transportation": ["Bike", "Public Transportation"],
       "rating": 4.6,
       "ratingCount": 8
     },
@@ -83,9 +65,7 @@
       "lastName": "Brown",
       "phoneNumber": "+1 (555) 123-4567",
       "address": "202 Maple Dr, Seniorburg",
-      "languages": [
-        "English"
-      ],
+      "languages": ["English"],
       "rating": null,
       "ratingCount": null
     },
@@ -98,15 +78,9 @@
       "lastName": "Garcia",
       "phoneNumber": "+1 (666) 987-6543",
       "address": "303 Cedar Ln, Assistville",
-      "languages": [
-        "English",
-        "Portuguese"
-      ],
+      "languages": ["English", "Portuguese"],
       "birthDate": "1995-03-12",
-      "transportation": [
-        "Car",
-        "Scooter"
-      ],
+      "transportation": ["Car", "Scooter"],
       "rating": 4.9,
       "ratingCount": 20
     }

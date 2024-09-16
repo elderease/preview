@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: "https://your-frontend-url.netlify.app",
+    origin: "https://your-frontend-url.netlify.app", // Replace with your actual frontend URL
   })
 );
 app.use(express.json({ limit: "10mb" }));
@@ -29,6 +29,11 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 
 // Define models
 const User = sequelize.define("User", {
+  id: {
+    type: DataTypes.BIGINT,
+    primaryKey: true,
+    allowNull: false,
+  },
   username: DataTypes.STRING,
   password: DataTypes.STRING,
   userType: DataTypes.STRING,
@@ -44,10 +49,15 @@ const User = sequelize.define("User", {
 });
 
 const Task = sequelize.define("Task", {
+  id: {
+    type: DataTypes.BIGINT,
+    primaryKey: true,
+    allowNull: false,
+  },
   title: DataTypes.STRING,
   description: DataTypes.TEXT,
-  elderlyId: DataTypes.INTEGER,
-  volunteerId: DataTypes.INTEGER,
+  elderlyId: DataTypes.BIGINT,
+  volunteerId: DataTypes.BIGINT,
   status: DataTypes.STRING,
   image: DataTypes.STRING,
   createdAt: DataTypes.DATE,
@@ -58,18 +68,28 @@ const Task = sequelize.define("Task", {
 });
 
 const Message = sequelize.define("Message", {
-  senderId: DataTypes.INTEGER,
+  id: {
+    type: DataTypes.BIGINT,
+    primaryKey: true,
+    allowNull: false,
+  },
+  senderId: DataTypes.BIGINT,
   senderName: DataTypes.STRING,
   content: DataTypes.TEXT,
   timestamp: DataTypes.DATE,
-  taskId: DataTypes.INTEGER,
+  taskId: DataTypes.BIGINT,
 });
 
 const Notification = sequelize.define("Notification", {
-  userId: DataTypes.INTEGER,
+  id: {
+    type: DataTypes.BIGINT,
+    primaryKey: true,
+    allowNull: false,
+  },
+  userId: DataTypes.BIGINT,
   title: DataTypes.STRING,
   message: DataTypes.TEXT,
-  taskId: DataTypes.INTEGER,
+  taskId: DataTypes.BIGINT,
   read: DataTypes.BOOLEAN,
   createdAt: DataTypes.DATE,
 });
@@ -93,6 +113,11 @@ const createNotification = async (userId, title, message, taskId) => {
   console.log(`Notification added to database for user ${userId}`);
   return newNotification;
 };
+
+// Root route for API health check
+app.get("/", (req, res) => {
+  res.send("ElderEase API is running");
+});
 
 // Routes
 app.post("/tasks", async (req, res) => {
