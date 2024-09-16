@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 const cors = require("cors");
 app.use(
   cors({
-    origin: "https://incomparable-taiyaki-956d9f.netlify.app",
+    origin: "*", // Allow all origins for now, you can restrict this later
     credentials: true,
   })
 );
@@ -355,4 +355,32 @@ app.get("/fetch-tasks", async (req, res) => {
     console.error("Error fetching tasks:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+app.get("/notifications", async (req, res) => {
+  const { userId } = req.query;
+  try {
+    const notifications = await Notification.findAll({
+      where: { userId },
+      order: [["createdAt", "DESC"]],
+    });
+    res.json(notifications);
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    res.status(500).json({ error: "Error fetching notifications" });
+  }
+});
+
+app.get("/tasks", async (req, res) => {
+  try {
+    const tasks = await Task.findAll();
+    res.json(tasks);
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ error: "Error fetching tasks" });
+  }
+});
+
+app.use((req, res) => {
+  res.status(404).send("Not Found");
 });
