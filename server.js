@@ -338,7 +338,22 @@ app.patch("/notifications/:id", async (req, res) => {
 
 app.get("/users", async (req, res) => {
   try {
-    const users = await User.findAll();
+    const { username, phoneNumber } = req.query;
+    let whereClause = {};
+
+    if (username) {
+      whereClause.username = username;
+    }
+
+    if (phoneNumber) {
+      whereClause.phoneNumber = phoneNumber;
+    }
+
+    const users = await User.findAll({
+      where: whereClause,
+      attributes: ["id", "username", "phoneNumber"], // Only return necessary fields
+    });
+
     res.json(users);
   } catch (error) {
     console.error("Error fetching users:", error);

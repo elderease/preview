@@ -18,11 +18,13 @@ export const AuthProvider = ({ children }) => {
 
   const checkUsernameUnique = async (username) => {
     try {
+      console.log(`Checking uniqueness for username: ${username}`);
       const response = await fetch(`${API_URL}/users?username=${username}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const users = await response.json();
+      console.log(`Users found with this username: ${users.length}`);
       return users.length === 0;
     } catch (error) {
       console.error("Error checking username uniqueness:", error);
@@ -32,12 +34,17 @@ export const AuthProvider = ({ children }) => {
 
   const checkPhoneUnique = async (phone) => {
     try {
+      console.log(`Checking uniqueness for phone: ${phone}`);
       const response = await fetch(`${API_URL}/users?phoneNumber=${phone}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const users = await response.json();
+      console.log(`Users found with this phone: ${users.length}`);
       return users.length === 0;
     } catch (error) {
       console.error("Error checking phone uniqueness:", error);
-      return false;
+      throw error;
     }
   };
 
