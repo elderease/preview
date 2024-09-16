@@ -9,19 +9,21 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const cors = require("cors");
-app.options("*", cors());
-
+require("dotenv").config();
+// CORS configuration
 app.use(
   cors({
-    origin: "https://incomparable-taiyaki-956d9f.netlify.app",
+    origin:
+      process.env.FRONTEND_URL ||
+      "https://incomparable-taiyaki-956d9f.netlify.app",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
   })
 );
-app.options("*", cors());
 
 app.use(express.json());
+
 // Database connection
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
@@ -33,6 +35,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     },
   },
 });
+
 sequelize
   .authenticate()
   .then(() => console.log("Database connected successfully"))
@@ -405,4 +408,7 @@ app.post("/login", async (req, res) => {
 });
 app.use((req, res) => {
   res.status(404).send("Not Found");
+});
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

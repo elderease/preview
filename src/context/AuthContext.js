@@ -56,10 +56,6 @@ export const AuthProvider = ({ children }) => {
   // Output: boolean (true if login successful, false otherwise)
   const login = async (credentials) => {
     try {
-      console.log(
-        "Attempting to login:",
-        `${process.env.REACT_APP_API_URL}/login`
-      );
       const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
         method: "POST",
         headers: {
@@ -72,7 +68,6 @@ export const AuthProvider = ({ children }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const user = await response.json();
-      console.log("Login response:", user);
       setUser(user);
       localStorage.setItem("user", JSON.stringify(user));
       return true;
@@ -154,4 +149,3 @@ export const useAuth = () => {
   }
   return context;
 };
-console.log("API URL:", process.env.REACT_APP_API_URL);
