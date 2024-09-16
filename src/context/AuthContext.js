@@ -46,6 +46,7 @@ export const AuthProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(credentials),
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

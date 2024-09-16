@@ -2,13 +2,27 @@ const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
 const path = require("path");
 const fs = require("fs");
+const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 10000;
 
-app.use(express.json());
+// CORS configuration
+const corsOptions = {
+  origin: [
+    "https://incomparable-taiyaki-956d9f.netlify.app",
+    "http://localhost:3000",
+  ],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
 
+app.use(cors(corsOptions));
+
+app.use(express.json());
 // Database connection
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
