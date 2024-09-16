@@ -16,7 +16,7 @@ const VolunteerDashboard = () => {
   const location = useLocation();
 
   // API base URL
-  const API_BASE_URL = "http://localhost:3005";
+  const API_BASE_URL = "https://preview-bc6q.onrender.com/";
 
   // Effect to fetch tasks and handle URL params
   useEffect(() => {

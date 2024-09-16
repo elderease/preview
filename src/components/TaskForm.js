@@ -8,7 +8,7 @@ const TaskForm = ({ onClose, onTasksUpdated }) => {
   const [image, setImage] = useState(null);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = "http://localhost:3005";
+  const API_BASE_URL = "https://preview-bc6q.onrender.com/";
 
   // Handle file input change
   const handleFileChange = (e) => {

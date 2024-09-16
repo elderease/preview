@@ -4,7 +4,7 @@ import ChatComponent from "./ChatComponent";
 
 const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
   const { user } = useAuth();
-  const API_BASE_URL = "http://localhost:3005";
+  const API_BASE_URL = "https://preview-bc6q.onrender.com/";
 
   // State for user details and rating
   const [elderlyDetails, setElderlyDetails] = useState(null);

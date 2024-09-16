@@ -7,7 +7,7 @@ const ChatComponent = ({ taskId }) => {
   const { user } = useAuth();
   const messagesEndRef = useRef(null);
 
-  const API_BASE_URL = "http://localhost:3005";
+  const API_BASE_URL = "https://preview-bc6q.onrender.com/";
 
   // Memoize fetchMessages to avoid recreating it on every render
   const fetchMessages = useCallback(async () => {

@@ -19,13 +19,16 @@ const Notifications = ({
   const handleNotificationClick = async (notification) => {
     try {
       // Mark the notification as read
-      await fetch(`http://localhost:3005/notifications/${notification.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ read: true }),
-      });
+      await fetch(
+        `https://preview-bc6q.onrender.com//notifications/${notification.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ read: true }),
+        }
+      );
       onNotificationClick();
     } catch (error) {
       console.error("Error marking notification as read:", error);

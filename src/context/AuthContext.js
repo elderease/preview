@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   const checkUsernameUnique = async (username) => {
     try {
       const response = await fetch(
-        `http://localhost:3005/users?username=${username}`
+        `https://preview-bc6q.onrender.com//users?username=${username}`
       );
       const users = await response.json();
       return users.length === 0;
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   const checkPhoneUnique = async (phone) => {
     try {
       const response = await fetch(
-        `http://localhost:3005/users?phoneNumber=${phone}`
+        `https://preview-bc6q.onrender.com//users?phoneNumber=${phone}`
       );
       const users = await response.json();
       return users.length === 0;
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   // Output: boolean (true if login successful, false otherwise)
   const login = async (credentials) => {
     try {
-      const response = await fetch("http://localhost:3005/users");
+      const response = await fetch("https://preview-bc6q.onrender.com//users");
       const users = await response.json();
       const user = users.find(
         (u) =>
@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Phone number already in use");
       }
 
-      const response = await fetch("http://localhost:3005/users", {
+      const response = await fetch("https://preview-bc6q.onrender.com//users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
