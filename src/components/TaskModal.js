@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import ChatComponent from "./ChatComponent";
 
@@ -13,44 +13,56 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
   const [showRating, setShowRating] = useState(false);
 
   // Effect to fetch user details based on task and user type
+
+  // Function to fetch elderly user details
+  const fetchElderlyDetails = useCallback(
+    async (elderlyId) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/${elderlyId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setElderlyDetails(data);
+        } else {
+          console.error("Failed to fetch elderly details");
+        }
+      } catch (error) {
+        console.error("Error fetching elderly details:", error);
+      }
+    },
+    [API_BASE_URL]
+  );
+
+  // Function to fetch volunteer user details
+  const fetchVolunteerDetails = useCallback(
+    async (volunteerId) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/${volunteerId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setVolunteerDetails(data);
+        } else {
+          console.error("Failed to fetch volunteer details");
+        }
+      } catch (error) {
+        console.error("Error fetching volunteer details:", error);
+      }
+    },
+    [API_BASE_URL]
+  );
+
   useEffect(() => {
     if (isVolunteer && task.elderlyId) {
       fetchElderlyDetails(task.elderlyId);
     } else if (!isVolunteer && task.volunteerId) {
       fetchVolunteerDetails(task.volunteerId);
     }
-  }, [isVolunteer, task.elderlyId, task.volunteerId]);
-
-  // Function to fetch elderly user details
-  const fetchElderlyDetails = async (elderlyId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/${elderlyId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setElderlyDetails(data);
-      } else {
-        console.error("Failed to fetch elderly details");
-      }
-    } catch (error) {
-      console.error("Error fetching elderly details:", error);
-    }
-  };
-
-  // Function to fetch volunteer user details
-  const fetchVolunteerDetails = async (volunteerId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/${volunteerId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setVolunteerDetails(data);
-      } else {
-        console.error("Failed to fetch volunteer details");
-      }
-    } catch (error) {
-      console.error("Error fetching volunteer details:", error);
-    }
-  };
-
+  }, [
+    isVolunteer,
+    task.elderlyId,
+    task.volunteerId,
+    fetchElderlyDetails,
+    fetchVolunteerDetails,
+  ]);
   // Function to handle task acceptance by volunteer
   const handleAcceptTask = async () => {
     try {

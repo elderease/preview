@@ -39,7 +39,7 @@ const ElderlyDashboard = () => {
     if (taskId) {
       fetchTask(taskId);
     }
-  }, [location, fetchTasks]); // Add fetchTasks to the dependency array
+  }, [location, user.id, fetchTasks]); // Add fetchTasks to the dependency array
 
   const fetchTask = async (taskId) => {
     try {

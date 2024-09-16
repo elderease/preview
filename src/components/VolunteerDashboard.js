@@ -16,7 +16,7 @@ const VolunteerDashboard = () => {
   const location = useLocation();
 
   // API base URL
-  const API_BASE_URL = "${process.env.REACT_APP_API_URL}";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   // Effect to fetch tasks and handle URL params
   useEffect(() => {
