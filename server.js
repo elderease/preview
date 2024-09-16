@@ -364,25 +364,38 @@ app.get("/users", async (req, res) => {
 app.post("/users", async (req, res) => {
   try {
     const userData = req.body;
+    console.log("Received user data:", JSON.stringify(userData));
 
     // Check if username already exists
+    console.log("Checking if username exists:", userData.username);
     const existingUser = await User.findOne({
       where: { username: userData.username },
     });
     if (existingUser) {
+      console.log("Username already exists:", userData.username);
       return res.status(400).json({ error: "Username already exists" });
     }
 
     // Check if phone number already exists
+    console.log("Checking if phone number exists:", userData.phoneNumber);
     const existingPhone = await User.findOne({
       where: { phoneNumber: userData.phoneNumber },
     });
     if (existingPhone) {
+      console.log("Phone number already in use:", userData.phoneNumber);
       return res.status(400).json({ error: "Phone number already in use" });
     }
 
+    // Generate a new BIGINT ID
+    const newId =
+      BigInt(Date.now()) * BigInt(1000) +
+      BigInt(Math.floor(Math.random() * 1000));
+    userData.id = newId.toString(); // Convert to string for JSON compatibility
+
     // Create new user
+    console.log("Attempting to create new user with ID:", newId.toString());
     const newUser = await User.create(userData);
+    console.log("New user created:", newUser.id);
 
     // Remove password from the response
     const { password, ...userWithoutPassword } = newUser.toJSON();
@@ -390,7 +403,12 @@ app.post("/users", async (req, res) => {
     res.status(201).json(userWithoutPassword);
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error stack:", error.stack);
+    res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+      stack: error.stack,
+    });
   }
 });
 
