@@ -115,7 +115,11 @@ sequelize.sync({ force: false }).then(() => {
 // Helper function to create notifications
 const createNotification = async (userId, title, message, taskId) => {
   try {
+    const newId =
+      BigInt(Date.now()) * BigInt(1000) +
+      BigInt(Math.floor(Math.random() * 1000));
     const newNotification = await Notification.create({
+      id: newId.toString(),
       userId,
       title,
       message,
@@ -137,7 +141,13 @@ app.get("/", (req, res) => {
 
 app.post("/tasks", async (req, res) => {
   try {
-    const newTask = await Task.create(req.body);
+    const taskData = req.body;
+    const newId =
+      BigInt(Date.now()) * BigInt(1000) +
+      BigInt(Math.floor(Math.random() * 1000));
+    taskData.id = newId.toString();
+
+    const newTask = await Task.create(taskData);
     const volunteers = await User.findAll({ where: { userType: "volunteer" } });
 
     for (const volunteer of volunteers) {
@@ -153,6 +163,23 @@ app.post("/tasks", async (req, res) => {
   } catch (error) {
     console.error("Error creating task:", error);
     res.status(500).json({ error: "Error creating task" });
+  }
+});
+
+app.get("/tasks", async (req, res) => {
+  try {
+    const { userId, userType } = req.query;
+    let whereClause = {};
+
+    if (userType === "elderly") {
+      whereClause.elderlyId = userId;
+    }
+
+    const tasks = await Task.findAll({ where: whereClause });
+    res.json(tasks);
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ error: "Error fetching tasks" });
   }
 });
 
@@ -256,11 +283,17 @@ app.get("/tasks/:id/messages", async (req, res) => {
     res.status(500).json({ error: "Error fetching messages" });
   }
 });
-
 app.post("/tasks/:id/messages", async (req, res) => {
   const taskId = req.params.id;
   try {
-    const newMessage = await Message.create({ ...req.body, taskId: taskId });
+    const messageData = req.body;
+    const newId =
+      BigInt(Date.now()) * BigInt(1000) +
+      BigInt(Math.floor(Math.random() * 1000));
+    messageData.id = newId.toString();
+    messageData.taskId = taskId;
+
+    const newMessage = await Message.create(messageData);
     const task = await Task.findByPk(taskId);
     const recipientId =
       newMessage.senderId === task.elderlyId
@@ -281,6 +314,17 @@ app.post("/tasks/:id/messages", async (req, res) => {
   }
 });
 
+// Get messages for a task
+app.get("/tasks/:id/messages", async (req, res) => {
+  const taskId = req.params.id;
+  try {
+    const messages = await Message.findAll({ where: { taskId: taskId } });
+    res.json(messages);
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    res.status(500).json({ error: "Error fetching messages" });
+  }
+});
 app.patch("/users/:id/rate", async (req, res) => {
   const { id } = req.params;
   const { rating, taskId } = req.body;

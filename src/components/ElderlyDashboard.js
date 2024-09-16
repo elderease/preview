@@ -19,7 +19,7 @@ const ElderlyDashboard = () => {
   const fetchTasks = useCallback(async () => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/tasks?elderlyId=${user.id}`
+        `${API_BASE_URL}/tasks?userId=${user.id}&userType=elderly`
       );
       if (response.ok) {
         const data = await response.json();

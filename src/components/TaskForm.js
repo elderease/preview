@@ -65,8 +65,8 @@ const TaskForm = ({ onClose, onTasksUpdated }) => {
         throw new Error("Failed to create task");
       }
 
-      onTasksUpdated(); // Trigger a refresh of the task list
-      onClose(); // Close the modal
+      onTasksUpdated();
+      onClose();
     } catch (error) {
       console.error("Error creating task:", error);
       setError(error.message || "An error occurred while creating the task");
