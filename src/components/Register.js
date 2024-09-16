@@ -51,16 +51,12 @@ function Register() {
       // Check if username is unique
       const isUsernameUnique = await checkUsernameUnique(username);
       if (!isUsernameUnique) {
-        setAlert({ type: "error", message: "Username already exists" });
-        setIsLoading(false);
-        return;
+        throw new Error("Username already exists");
       }
       // Check if phone number is unique
       const isPhoneUnique = await checkPhoneUnique(phoneNumber);
       if (!isPhoneUnique) {
-        setAlert({ type: "error", message: "Phone number already in use" });
-        setIsLoading(false);
-        return;
+        throw new Error("Phone number already in use");
       }
       // Register user
       const userData = {
@@ -84,14 +80,15 @@ function Register() {
         });
         setRedirectCountdown(5);
       } else {
-        setAlert({
-          type: "error",
-          message: "Registration failed. Please try again.",
-        });
-        setIsLoading(false);
+        throw new Error("Registration failed. Please try again.");
       }
     } catch (error) {
-      setAlert({ type: "error", message: error.message });
+      setAlert({
+        type: "error",
+        message:
+          error.message || "An unexpected error occurred. Please try again.",
+      });
+    } finally {
       setIsLoading(false);
     }
   };

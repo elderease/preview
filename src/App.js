@@ -103,8 +103,8 @@ function AppContent() {
   useEffect(() => {
     function handleClickOutside(event) {
       if (
-        notificationRef.current &&
-        !notificationRef.current.contains(event.target)
+        showNotifications &&
+        !event.target.closest(".notifications-dropdown")
       ) {
         setShowNotifications(false);
       }
@@ -114,7 +114,7 @@ function AppContent() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [notificationRef]);
+  }, [showNotifications]);
 
   // Function to handle user logout
   // Input: None
@@ -201,7 +201,7 @@ function AppContent() {
                   )}
                 </button>
                 {showNotifications && (
-                  <div className="absolute right-0 z-20 mt-2 overflow-hidden bg-white rounded-md shadow-lg w-85">
+                  <div className="fixed inset-x-0 z-20 mx-4 mt-2 overflow-hidden bg-white rounded-md shadow-lg top-16 md:absolute md:right-0 md:left-auto md:top-auto md:w-96 notifications-dropdown">
                     <div className="py-2">
                       <div className="flex items-center justify-between px-4 py-2 bg-gray-100">
                         <h3 className="text-lg font-semibold text-black">
