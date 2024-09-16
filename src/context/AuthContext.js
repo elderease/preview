@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkUsernameUnique = async (username) => {
     try {
-      const response = await fetch(`${API_URL}users?username=${username}`);
+      const response = await fetch(`${API_URL}/users?username=${username}`);
       const users = await response.json();
       return users.length === 0;
     } catch (error) {

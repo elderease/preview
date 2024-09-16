@@ -30,7 +30,6 @@
     "eject": "react-scripts eject",
     "server": "node server.js"
   },
-  "proxy": "https://preview-bc6q.onrender.com",
   "eslintConfig": {
     "extends": [
       "react-app",
