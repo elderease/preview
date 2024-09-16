@@ -73,33 +73,41 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const isUsernameUnique = await checkUsernameUnique(userData.username);
-      const isPhoneUnique = await checkPhoneUnique(userData.phoneNumber);
+      console.log("Attempting to register user:", userData.username);
 
+      // Check if username is unique
+      const isUsernameUnique = await checkUsernameUnique(userData.username);
       if (!isUsernameUnique) {
         throw new Error("Username already exists");
       }
 
+      // Check if phone number is unique
+      const isPhoneUnique = await checkPhoneUnique(userData.phoneNumber);
       if (!isPhoneUnique) {
         throw new Error("Phone number already in use");
       }
 
+      // If both checks pass, proceed with registration
       const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...userData, id: Date.now() }),
+        body: JSON.stringify(userData),
       });
 
-      if (response.ok) {
-        const newUser = await response.json();
-        const { password, ...userWithoutPassword } = newUser;
-        setUser(userWithoutPassword);
-        localStorage.setItem("user", JSON.stringify(userWithoutPassword));
-        return true;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || `HTTP error! status: ${response.status}`
+        );
       }
-      return false;
+
+      const newUser = await response.json();
+      console.log("User registered successfully:", newUser.username);
+      setUser(newUser);
+      localStorage.setItem("user", JSON.stringify(newUser));
+      return true;
     } catch (error) {
       console.error("Registration error:", error);
       throw error;

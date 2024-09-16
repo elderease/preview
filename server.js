@@ -361,6 +361,39 @@ app.get("/users", async (req, res) => {
   }
 });
 
+app.post("/users", async (req, res) => {
+  try {
+    const userData = req.body;
+
+    // Check if username already exists
+    const existingUser = await User.findOne({
+      where: { username: userData.username },
+    });
+    if (existingUser) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    // Check if phone number already exists
+    const existingPhone = await User.findOne({
+      where: { phoneNumber: userData.phoneNumber },
+    });
+    if (existingPhone) {
+      return res.status(400).json({ error: "Phone number already in use" });
+    }
+
+    // Create new user
+    const newUser = await User.create(userData);
+
+    // Remove password from the response
+    const { password, ...userWithoutPassword } = newUser.toJSON();
+
+    res.status(201).json(userWithoutPassword);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.get("/tasks", async (req, res) => {
   try {
     const tasks = await Task.findAll();
