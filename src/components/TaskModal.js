@@ -49,18 +49,19 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
   );
 
   useEffect(() => {
-    if (isVolunteer && task.elderlyId) {
+    if (task.elderlyId) {
       fetchElderlyDetails(task.elderlyId);
-    } else if (!isVolunteer && task.volunteerId) {
+    }
+    if (task.volunteerId) {
       fetchVolunteerDetails(task.volunteerId);
     }
   }, [
-    isVolunteer,
     task.elderlyId,
     task.volunteerId,
     fetchElderlyDetails,
     fetchVolunteerDetails,
   ]);
+
   // Function to handle task acceptance by volunteer
   const handleAcceptTask = async () => {
     try {
@@ -202,7 +203,7 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                 />
               )}
               {/* User details section */}
-              {isVolunteer && elderlyDetails && (
+              {elderlyDetails && (
                 <div className="mt-4">
                   <h4 className="font-semibold">Elderly Details:</h4>
                   <p>
@@ -212,7 +213,7 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                   <p>Address: {elderlyDetails.address}</p>
                 </div>
               )}
-              {!isVolunteer && volunteerDetails && (
+              {volunteerDetails && (
                 <div className="mt-4">
                   <h4 className="font-semibold">Volunteer Details:</h4>
                   <p>
@@ -220,7 +221,6 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                     {volunteerDetails.lastName}
                   </p>
                   <p>Phone: {volunteerDetails.phoneNumber}</p>
-                  <p>Address: {volunteerDetails.address}</p>
                   <p>
                     Rating:{" "}
                     {volunteerDetails.rating
@@ -232,7 +232,7 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
               {/* Task Address */}
               <div className="mt-4">
                 <h4 className="font-semibold">Task Address:</h4>
-                <p>{task.address || "Address not provided"}</p>
+                <p>{elderlyDetails?.address || "Address not provided"}</p>
               </div>
             </div>
             {/* Chat section */}
