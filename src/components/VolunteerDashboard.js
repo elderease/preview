@@ -69,6 +69,28 @@ const VolunteerDashboard = () => {
     fetchTasks(); // Refresh tasks after closing modal
   };
 
+  // Handler for cancelling a task
+
+  const handleCancelTask = async (taskId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "Open", volunteerId: null }),
+      });
+      if (response.ok) {
+        fetchTasks(); // Refresh tasks after cancelling
+        setSelectedTask(null); // Close the modal
+      } else {
+        console.error("Failed to cancel task");
+      }
+    } catch (error) {
+      console.error("Error cancelling task:", error);
+    }
+  };
+
   // Render the dashboard
   return (
     <div className="container p-4 mx-auto">
@@ -111,6 +133,7 @@ const VolunteerDashboard = () => {
         <TaskModal
           task={selectedTask}
           onClose={handleCloseModal}
+          onCancel={handleCancelTask}
           onTaskUpdate={fetchTasks}
           isVolunteer={true}
         />

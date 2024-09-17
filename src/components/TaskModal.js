@@ -213,34 +213,32 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                 />
               )}
               {/* User details section */}
-              {isVolunteer
-                ? elderlyDetails && (
-                    <div className="mt-4">
-                      <h4 className="font-semibold">Elderly Details:</h4>
-                      <p>
-                        Name: {elderlyDetails.firstName}{" "}
-                        {elderlyDetails.lastName}
-                      </p>
-                      <p>Phone: {elderlyDetails.phoneNumber}</p>
-                      <p>Address: {elderlyDetails.address}</p>
-                    </div>
-                  )
-                : volunteerDetails && (
-                    <div className="mt-4">
-                      <h4 className="font-semibold">Volunteer Details:</h4>
-                      <p>
-                        Name: {volunteerDetails.firstName}{" "}
-                        {volunteerDetails.lastName}
-                      </p>
-                      <p>Phone: {volunteerDetails.phoneNumber}</p>
-                      <p>
-                        Rating:{" "}
-                        {volunteerDetails.rating
-                          ? volunteerDetails.rating.toFixed(1)
-                          : "N/A"}
-                      </p>
-                    </div>
-                  )}
+              {isVolunteer && elderlyDetails && (
+                <div className="mt-4">
+                  <h4 className="font-semibold">Elderly Details:</h4>
+                  <p>
+                    Name: {elderlyDetails.firstName} {elderlyDetails.lastName}
+                  </p>
+                  <p>Phone: {elderlyDetails.phoneNumber}</p>
+                  <p>Address: {elderlyDetails.address}</p>
+                </div>
+              )}
+              {!isVolunteer && volunteerDetails && (
+                <div className="mt-4">
+                  <h4 className="font-semibold">Volunteer Details:</h4>
+                  <p>
+                    Name: {volunteerDetails.firstName}{" "}
+                    {volunteerDetails.lastName}
+                  </p>
+                  <p>Phone: {volunteerDetails.phoneNumber}</p>
+                  <p>
+                    Rating:{" "}
+                    {volunteerDetails.rating
+                      ? volunteerDetails.rating.toFixed(1)
+                      : "N/A"}
+                  </p>
+                </div>
+              )}
             </div>
             {/* Chat section */}
             {(task.status === "Accepted" || task.status === "Completed") && (
@@ -272,7 +270,7 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                   <button
                     className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-700 hover:shadow-lg focus:outline-none"
                     type="button"
-                    onClick={handleCancelTask}
+                    onClick={() => onCancel(task.id)}
                   >
                     Cancel Task
                   </button>
