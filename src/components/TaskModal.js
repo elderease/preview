@@ -12,8 +12,6 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
   const [rating, setRating] = useState(0);
   const [showRating, setShowRating] = useState(false);
 
-  // Effect to fetch user details based on task and user type
-
   // Function to fetch elderly user details
   const fetchElderlyDetails = useCallback(
     async (elderlyId) => {
@@ -222,6 +220,7 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                     {volunteerDetails.lastName}
                   </p>
                   <p>Phone: {volunteerDetails.phoneNumber}</p>
+                  <p>Address: {volunteerDetails.address}</p>
                   <p>
                     Rating:{" "}
                     {volunteerDetails.rating
@@ -230,6 +229,11 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                   </p>
                 </div>
               )}
+              {/* Task Address */}
+              <div className="mt-4">
+                <h4 className="font-semibold">Task Address:</h4>
+                <p>{task.address || "Address not provided"}</p>
+              </div>
             </div>
             {/* Chat section */}
             {(task.status === "Accepted" || task.status === "Completed") && (
@@ -271,15 +275,17 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                   </button>
                 )}
 
-              {task.status !== "Completed" && task.status !== "Archived" && (
-                <button
-                  className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-100 hover:shadow-lg focus:outline-none"
-                  type="button"
-                  onClick={() => onCancel(task.id)}
-                >
-                  Cancel Task
-                </button>
-              )}
+              {!isVolunteer &&
+                task.status !== "Completed" &&
+                task.status !== "Archived" && (
+                  <button
+                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-100 hover:shadow-lg focus:outline-none"
+                    type="button"
+                    onClick={() => onCancel(task.id)}
+                  >
+                    Cancel Task
+                  </button>
+                )}
               <button
                 className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-gray-500 rounded shadow outline-none active:bg-gray-600 hover:shadow-lg focus:outline-none"
                 type="button"
