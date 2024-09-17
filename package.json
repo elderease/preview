@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "18.20.4"
+    "node": "18"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.5.7",
