@@ -13,28 +13,22 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
   const [showRating, setShowRating] = useState(false);
 
   // Function to fetch elderly user details
-  const fetchElderlyDetails = useCallback(
-    async (elderlyId) => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/users/${elderlyId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setElderlyDetails(data);
-        } else {
-          console.error("Failed to fetch elderly details");
-        }
-      } catch (error) {
-        console.error("Error fetching elderly details:", error);
+  const fetchElderlyDetails = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${task.elderlyId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setElderlyDetails(data);
+      } else {
+        console.error("Failed to fetch elderly details");
       }
-    },
-    [API_BASE_URL]
-  );
+    }, [API_BASE_URL, task.elderlyId]);
 
   // Function to fetch volunteer user details
-  const fetchVolunteerDetails = useCallback(
-    async (volunteerId) => {
+  const fetchVolunteerDetails = useCallback(async () => {
+    if (task.volunteerId) {
       try {
-        const response = await fetch(`${API_BASE_URL}/users/${volunteerId}`);
+        const response = await fetch(`${API_BASE_URL}/users/${task.volunteerId}`);
         if (response.ok) {
           const data = await response.json();
           setVolunteerDetails(data);
@@ -44,23 +38,13 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
       } catch (error) {
         console.error("Error fetching volunteer details:", error);
       }
-    },
-    [API_BASE_URL]
-  );
+    }
+  }, [API_BASE_URL, task.volunteerId]);
 
   useEffect(() => {
-    if (task.elderlyId) {
-      fetchElderlyDetails(task.elderlyId);
-    }
-    if (task.volunteerId) {
-      fetchVolunteerDetails(task.volunteerId);
-    }
-  }, [
-    task.elderlyId,
-    task.volunteerId,
-    fetchElderlyDetails,
-    fetchVolunteerDetails,
-  ]);
+    fetchElderlyDetails();
+    fetchVolunteerDetails();
+  }, [fetchElderlyDetails, fetchVolunteerDetails]);
 
   // Function to handle task acceptance by volunteer
   const handleAcceptTask = async () => {
@@ -102,6 +86,26 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
       }
     } catch (error) {
       console.error("Error completing task:", error);
+    }
+  };
+
+  // Function to handle task cancellation by volunteer
+  const handleCancelTask = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "Open", volunteerId: null }),
+      });
+      if (response.ok) {
+        onClose();
+      } else {
+        console.error("Failed to cancel task");
+      }
+    } catch (error) {
+      console.error("Error cancelling task:", error);
     }
   };
 
@@ -203,37 +207,34 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                 />
               )}
               {/* User details section */}
-              {elderlyDetails && (
-                <div className="mt-4">
-                  <h4 className="font-semibold">Elderly Details:</h4>
-                  <p>
-                    Name: {elderlyDetails.firstName} {elderlyDetails.lastName}
-                  </p>
-                  <p>Phone: {elderlyDetails.phoneNumber}</p>
-                  <p>Address: {elderlyDetails.address}</p>
-                </div>
+              {isVolunteer ? (
+                elderlyDetails && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold">Elderly Details:</h4>
+                    <p>
+                      Name: {elderlyDetails.firstName} {elderlyDetails.lastName}
+                    </p>
+                    <p>Phone: {elderlyDetails.phoneNumber}</p>
+                    <p>Address: {elderlyDetails.address}</p>
+                  </div>
+                )
+              ) : (
+                volunteerDetails && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold">Volunteer Details:</h4>
+                    <p>
+                      Name: {volunteerDetails.firstName} {volunteerDetails.lastName}
+                    </p>
+                    <p>Phone: {volunteerDetails.phoneNumber}</p>
+                    <p>
+                      Rating:{" "}
+                      {volunteerDetails.rating
+                        ? volunteerDetails.rating.toFixed(1)
+                        : "N/A"}
+                    </p>
+                  </div>
+                )
               )}
-              {volunteerDetails && (
-                <div className="mt-4">
-                  <h4 className="font-semibold">Volunteer Details:</h4>
-                  <p>
-                    Name: {volunteerDetails.firstName}{" "}
-                    {volunteerDetails.lastName}
-                  </p>
-                  <p>Phone: {volunteerDetails.phoneNumber}</p>
-                  <p>
-                    Rating:{" "}
-                    {volunteerDetails.rating
-                      ? volunteerDetails.rating.toFixed(1)
-                      : "N/A"}
-                  </p>
-                </div>
-              )}
-              {/* Task Address */}
-              <div className="mt-4">
-                <h4 className="font-semibold">Task Address:</h4>
-                <p>{elderlyDetails?.address || "Address not provided"}</p>
-              </div>
             </div>
             {/* Chat section */}
             {(task.status === "Accepted" || task.status === "Completed") && (
@@ -244,7 +245,6 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
             )}
             {/* Action buttons */}
             <div className="flex flex-row items-center justify-end p-6 border-t border-solid rounded-b border-blueGray-200">
-              {/* Conditional rendering of action buttons based on user type and task status */}
               {isVolunteer && task.status === "Open" && (
                 <button
                   className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-green-500 rounded shadow outline-none active:bg-emerald-600 hover:shadow-lg focus:outline-none"
@@ -255,37 +255,41 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                 </button>
               )}
               {isVolunteer && task.status === "Accepted" && (
-                <button
-                  className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-green-500 rounded shadow outline-none active:bg-emerald-600 hover:shadow-lg focus:outline-none"
-                  type="button"
-                  onClick={handleCompleteTask}
-                >
-                  Complete Task
-                </button>
-              )}
-              {!isVolunteer &&
-                task.status === "Completed" &&
-                !task.elderlyConfirmed && (
+                <>
                   <button
-                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear rounded shadow outline-none bg-emerald-500 active:bg-emerald-600 hover:shadow-lg focus:outline-none"
+                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-green-500 rounded shadow outline-none active:bg-emerald-600 hover:shadow-lg focus:outline-none"
                     type="button"
-                    onClick={handleConfirmCompletion}
+                    onClick={handleCompleteTask}
                   >
-                    Confirm Completion
+                    Complete Task
                   </button>
-                )}
-
-              {!isVolunteer &&
-                task.status !== "Completed" &&
-                task.status !== "Archived" && (
                   <button
-                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-100 hover:shadow-lg focus:outline-none"
+                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-700 hover:shadow-lg focus:outline-none"
                     type="button"
-                    onClick={() => onCancel(task.id)}
+                    onClick={handleCancelTask}
                   >
                     Cancel Task
                   </button>
-                )}
+                </>
+              )}
+              {!isVolunteer && task.status === "Completed" && !task.elderlyConfirmed && (
+                <button
+                  className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear rounded shadow outline-none bg-emerald-500 active:bg-emerald-600 hover:shadow-lg focus:outline-none"
+                  type="button"
+                  onClick={handleConfirmCompletion}
+                >
+                  Confirm Completion
+                </button>
+              )}
+              {!isVolunteer && task.status !== "Completed" && task.status !== "Archived" && (
+                <button
+                  className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-100 hover:shadow-lg focus:outline-none"
+                  type="button"
+                  onClick={() => onCancel(task.id)}
+                >
+                  Cancel Task
+                </button>
+              )}
               <button
                 className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-gray-500 rounded shadow outline-none active:bg-gray-600 hover:shadow-lg focus:outline-none"
                 type="button"
