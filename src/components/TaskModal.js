@@ -22,13 +22,18 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
       } else {
         console.error("Failed to fetch elderly details");
       }
-    }, [API_BASE_URL, task.elderlyId]);
+    } catch (error) {
+      console.error("Error fetching elderly details:", error);
+    }
+  }, [API_BASE_URL, task.elderlyId]);
 
   // Function to fetch volunteer user details
   const fetchVolunteerDetails = useCallback(async () => {
     if (task.volunteerId) {
       try {
-        const response = await fetch(`${API_BASE_URL}/users/${task.volunteerId}`);
+        const response = await fetch(
+          `${API_BASE_URL}/users/${task.volunteerId}`
+        );
         if (response.ok) {
           const data = await response.json();
           setVolunteerDetails(data);
@@ -157,6 +162,7 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
       );
     }
   };
+
   // Function to handle task cancellation by volunteer or elderly
   const handleBackdropClick = (e) => {
     // Only close if the backdrop itself is clicked, not its children
@@ -207,34 +213,34 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                 />
               )}
               {/* User details section */}
-              {isVolunteer ? (
-                elderlyDetails && (
-                  <div className="mt-4">
-                    <h4 className="font-semibold">Elderly Details:</h4>
-                    <p>
-                      Name: {elderlyDetails.firstName} {elderlyDetails.lastName}
-                    </p>
-                    <p>Phone: {elderlyDetails.phoneNumber}</p>
-                    <p>Address: {elderlyDetails.address}</p>
-                  </div>
-                )
-              ) : (
-                volunteerDetails && (
-                  <div className="mt-4">
-                    <h4 className="font-semibold">Volunteer Details:</h4>
-                    <p>
-                      Name: {volunteerDetails.firstName} {volunteerDetails.lastName}
-                    </p>
-                    <p>Phone: {volunteerDetails.phoneNumber}</p>
-                    <p>
-                      Rating:{" "}
-                      {volunteerDetails.rating
-                        ? volunteerDetails.rating.toFixed(1)
-                        : "N/A"}
-                    </p>
-                  </div>
-                )
-              )}
+              {isVolunteer
+                ? elderlyDetails && (
+                    <div className="mt-4">
+                      <h4 className="font-semibold">Elderly Details:</h4>
+                      <p>
+                        Name: {elderlyDetails.firstName}{" "}
+                        {elderlyDetails.lastName}
+                      </p>
+                      <p>Phone: {elderlyDetails.phoneNumber}</p>
+                      <p>Address: {elderlyDetails.address}</p>
+                    </div>
+                  )
+                : volunteerDetails && (
+                    <div className="mt-4">
+                      <h4 className="font-semibold">Volunteer Details:</h4>
+                      <p>
+                        Name: {volunteerDetails.firstName}{" "}
+                        {volunteerDetails.lastName}
+                      </p>
+                      <p>Phone: {volunteerDetails.phoneNumber}</p>
+                      <p>
+                        Rating:{" "}
+                        {volunteerDetails.rating
+                          ? volunteerDetails.rating.toFixed(1)
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
             </div>
             {/* Chat section */}
             {(task.status === "Accepted" || task.status === "Completed") && (
@@ -272,24 +278,28 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
                   </button>
                 </>
               )}
-              {!isVolunteer && task.status === "Completed" && !task.elderlyConfirmed && (
-                <button
-                  className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear rounded shadow outline-none bg-emerald-500 active:bg-emerald-600 hover:shadow-lg focus:outline-none"
-                  type="button"
-                  onClick={handleConfirmCompletion}
-                >
-                  Confirm Completion
-                </button>
-              )}
-              {!isVolunteer && task.status !== "Completed" && task.status !== "Archived" && (
-                <button
-                  className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-100 hover:shadow-lg focus:outline-none"
-                  type="button"
-                  onClick={() => onCancel(task.id)}
-                >
-                  Cancel Task
-                </button>
-              )}
+              {!isVolunteer &&
+                task.status === "Completed" &&
+                !task.elderlyConfirmed && (
+                  <button
+                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear rounded shadow outline-none bg-emerald-500 active:bg-emerald-600 hover:shadow-lg focus:outline-none"
+                    type="button"
+                    onClick={handleConfirmCompletion}
+                  >
+                    Confirm Completion
+                  </button>
+                )}
+              {!isVolunteer &&
+                task.status !== "Completed" &&
+                task.status !== "Archived" && (
+                  <button
+                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-red-600 rounded shadow outline-none active:bg-red-100 hover:shadow-lg focus:outline-none"
+                    type="button"
+                    onClick={() => onCancel(task.id)}
+                  >
+                    Cancel Task
+                  </button>
+                )}
               <button
                 className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear bg-gray-500 rounded shadow outline-none active:bg-gray-600 hover:shadow-lg focus:outline-none"
                 type="button"
