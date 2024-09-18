@@ -65,6 +65,26 @@ const ElderlyDashboard = () => {
     handleTasksUpdated();
   };
 
+  const handleCancelTask = async (taskId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "Cancelled" }),
+      });
+      if (response.ok) {
+        handleTasksUpdated();
+        setSelectedTask(null);
+      } else {
+        console.error("Failed to cancel task");
+      }
+    } catch (error) {
+      console.error("Error cancelling task:", error);
+    }
+  };
+
   return (
     <div className="container p-4 mx-auto">
       <h1 className="mb-4 text-2xl font-bold">Elderly Dashboard</h1>
@@ -117,6 +137,7 @@ const ElderlyDashboard = () => {
         <TaskModal
           task={selectedTask}
           onClose={handleCloseModal}
+          onCancel={handleCancelTask} // Add this line
           isVolunteer={false}
         />
       )}

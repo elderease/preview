@@ -122,7 +122,8 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
   // Function to submit rating and update task status
   const handleSubmitRating = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
+      // First, update the task
+      const taskResponse = await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -133,33 +134,35 @@ const TaskModal = ({ task, onClose, onCancel, isVolunteer }) => {
           rating: rating,
         }),
       });
-      if (response.ok) {
-        // Update volunteer's rating
-        if (volunteerDetails) {
-          const newRating =
-            (volunteerDetails.rating * volunteerDetails.ratingCount + rating) /
-            (volunteerDetails.ratingCount + 1);
-          const newRatingCount = volunteerDetails.ratingCount + 1;
-          await fetch(`${API_BASE_URL}/users/${volunteerDetails.id}`, {
+
+      if (!taskResponse.ok) {
+        throw new Error("Failed to update task");
+      }
+
+      // Then, update the volunteer's rating
+      if (task.volunteerId) {
+        const userResponse = await fetch(
+          `${API_BASE_URL}/users/${task.volunteerId}/rate`,
+          {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              rating: newRating,
-              ratingCount: newRatingCount,
+              rating: rating,
+              taskId: task.id,
             }),
-          });
+          }
+        );
+
+        if (!userResponse.ok) {
+          throw new Error("Failed to update user rating");
         }
-        onClose();
-      } else {
-        console.error("Failed to confirm task completion and submit rating");
       }
+
+      onClose();
     } catch (error) {
-      console.error(
-        "Error confirming task completion and submitting rating:",
-        error
-      );
+      console.error("Error submitting rating:", error);
     }
   };
 

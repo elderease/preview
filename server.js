@@ -243,8 +243,9 @@ app.patch("/users/:id/rate", async (req, res) => {
 
     user.ratings = user.ratings || [];
     user.ratings.push(rating);
-    user.averageRating =
-      user.ratings.reduce((a, b) => a + b) / user.ratings.length;
+    user.averageRating = parseFloat(
+      (user.ratings.reduce((a, b) => a + b) / user.ratings.length).toFixed(2)
+    );
     await user.save();
 
     task.rating = rating;
