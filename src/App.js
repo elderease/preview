@@ -165,23 +165,43 @@ function AppContent() {
   // Output: None, but deletes all notifications on server and updates client state
   const handleClearAllNotifications = async () => {
     try {
-      await Promise.all(
+      const results = await Promise.allSettled(
         notifications.map((notification) =>
           fetch(`${API_BASE_URL}/notifications/${notification.id}`, {
             method: "DELETE",
           })
         )
       );
-      setNotifications([]);
-      setUnreadCount(0);
+
+      const failedDeletions = results.filter(
+        (result) => result.status === "rejected"
+      );
+
+      if (failedDeletions.length > 0) {
+        console.error(
+          `Failed to delete ${failedDeletions.length} notifications`
+        );
+        setAlert({
+          type: "error",
+          message: `Failed to delete ${failedDeletions.length} notifications. Please try again.`,
+        });
+      } else {
+        setNotifications([]);
+        setUnreadCount(0);
+        setAlert({
+          type: "success",
+          message: "All notifications cleared successfully.",
+        });
+      }
     } catch (error) {
       console.error("Error clearing all notifications:", error);
+      setAlert({
+        type: "error",
+        message:
+          "An error occurred while clearing notifications. Please try again.",
+      });
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   // Render the main application layout and routes
   return (
